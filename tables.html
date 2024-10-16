@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tables Page - Weather App</title>
+    <!-- <link rel="stylesheet" href="styles.css" /> -->
+    <style>
+      /* General Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+      }
+
+      .container {
+        display: flex;
+        height: 100vh;
+      }
+
+      .side-menu {
+        width: 20%;
+        background-color: #333;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 20px;
+      }
+
+      .logo h2 {
+        margin-bottom: 40px;
+      }
+
+      nav ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      nav ul li {
+        margin: 20px 0;
+      }
+
+      nav ul li a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+      }
+
+      nav ul li a:hover {
+        text-decoration: underline;
+      }
+
+      main {
+        width: 80%;
+        padding: 20px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+      }
+
+      .search-bar {
+        width: 70%;
+        padding: 10px;
+        font-size: 16px;
+      }
+
+      .user-profile img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+      }
+
+      .table-section {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .chatbot-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      .chat-bar {
+        padding: 10px;
+        background-color: #ddd;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      #chat-input {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+
+      .answer-area {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        height: 200px;
+        overflow-y: auto; /* Allow scrolling when content overflows */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+
+      .message {
+        margin-bottom: 10px;
+      }
+
+      #tables-link {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Side Menu -->
+      <aside class="side-menu">
+        <div class="logo">
+          <h2>Weather App</h2>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="./index.html" id="dashboard-link">Dashboard</a></li>
+            <li><a href="#" id="tables-link">Tables</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main>
+        <!-- Header with Search and Profile -->
+        <header class="header">
+          <input type="text" class="search-bar" placeholder="Search city..." />
+          <div class="user-profile">
+            <img src="./assets/logo.png" alt="User Profile" />
+          </div>
+        </header>
+
+        <!-- Table Section -->
+        <div>
+          <section class="table-section">
+            <h3>Table</h3>
+            <!-- The actual table content can be added here -->
+          </section>
+
+          <!-- Chatbot Section -->
+          <section class="chatbot-section">
+            <div class="chat-bar">
+              <input
+                type="text"
+                id="chat-input"
+                placeholder="Ask the chatbot..."
+              />
+              <button onclick="handleSendMessage()">Send</button>
+            </div>
+            <div class="answer-area">
+              <!-- Chat messages will be appended here -->
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script src="./tables.js"></script>
+  </body>
+</html>
