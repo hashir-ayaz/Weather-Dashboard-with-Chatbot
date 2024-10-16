@@ -229,8 +229,8 @@ const applyFilter = () => {
   } else if (filterOption === "descending") {
     forecastList.sort((a, b) => b.main.temp - a.main.temp);
   } else if (filterOption === "rain") {
-    forecastList = forecastList.filter((forecast) =>
-      forecast.weather[0].main.toLowerCase().includes("rain")
+    forecastList = forecastList.filter(
+      (forecast) => !forecast.weather[0].main.toLowerCase().includes("rain")
     );
   } else if (filterOption === "highest-temp") {
     const highestTemp = forecastList.reduce(
