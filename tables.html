@@ -278,6 +278,48 @@
   font-weight: bold;
 }
 
+/* Filter Container Styling */
+.filter-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #f7f7f7;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.filter-container label {
+  margin-right: 15px;
+  font-size: 1rem;
+  color: #2f4f4f;
+  font-weight: bold;
+}
+
+.filter-container select {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #b0e57c; /* Light green */
+  border-radius: 8px;
+  background-color: #fff;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 300px;
+  color: #333;
+}
+
+/* Hover and Focus Styling */
+.filter-container select:hover,
+.filter-container select:focus {
+  border-color: #6cbf84; /* Darker green */
+  box-shadow: 0 0 10px rgba(108, 191, 132, 0.2);
+}
+
+.filter-container option {
+  padding: 10px;
+  color: #333;
+}
+
       
     </style>
   </head>
@@ -311,6 +353,18 @@
         </header>
 
         <!-- Table Section -->
+        <div class="filter-container">
+          <label for="filter-options">Filter or Sort:</label>
+          <select id="filter-options" onchange="applyFilter()">
+            <option value="">Select an option</option>
+            <option value="ascending">Show temperatures in ascending order</option>
+            <option value="descending">Show temperatures in descending order</option>
+            <option value="rain">Filter out days without rain</option>
+            <option value="highest-temp">Show the day with the highest temperature</option>
+          </select>
+        </div>
+        
+        
         <div>
           <section id="table-container">
             <h3>Table</h3>

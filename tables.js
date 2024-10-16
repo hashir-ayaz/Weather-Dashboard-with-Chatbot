@@ -96,37 +96,29 @@ const appendMessageToAnswerArea = (role, text) => {
 
 const rowsPerPage = 10; // Number of rows per page
 let currentPage = 1;
+let originalForecastList = []; // To store the original data for filtering
+let filteredForecastList = []; // Store the current filtered/sorted list
 
+// Function to display city name
 const displayCityName = () => {
   const savedCityName = localStorage.getItem("cityName");
+  const cityHeading = document.getElementById("city-heading");
 
-  // If the cityName exists in localStorage, display it in the heading
   if (savedCityName) {
-    document.getElementById(
-      "city-heading"
-    ).innerText = `Weather Information for ${savedCityName}`;
+    cityHeading.innerText = `Weather Information for ${savedCityName}`;
   } else {
-    document.getElementById("city-heading").innerText = `No city selected`;
+    cityHeading.innerText = `No city selected`;
   }
 };
 
-const createForecastTable = (page = 1) => {
-  // Get the forecast data from localStorage
-  const forecastData = JSON.parse(localStorage.getItem("fiveDayForecast"));
-  if (!forecastData) return; // If no forecast data, don't create the table
-
-  // Get the list of forecast entries
-  const forecastList = forecastData.list;
-
-  // Calculate the start and end index for the current page
+// Create the forecast table based on current page and filtered data
+const createForecastTable = (page = 1, forecastList = filteredForecastList) => {
   const startIndex = (page - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
 
-  // Create a table element
   const table = document.createElement("table");
-  table.classList.add("forecast-table"); // Add a class for styling
+  table.classList.add("forecast-table");
 
-  // Create the header row
   const headerRow = document.createElement("tr");
   const headers = [
     "Date & Time",
@@ -143,18 +135,16 @@ const createForecastTable = (page = 1) => {
   });
   table.appendChild(headerRow);
 
-  // Loop through the forecastList for the current page
+  // Paginated forecast data
   forecastList.slice(startIndex, endIndex).forEach((forecast) => {
     const row = document.createElement("tr");
 
-    // Extract relevant information
     const dateTime = forecast.dt_txt;
     const temperature = Math.round(forecast.main.temp - 273.15); // Convert Kelvin to Celsius
     const condition = forecast.weather[0].description;
     const windSpeed = forecast.wind.speed;
     const humidity = forecast.main.humidity;
 
-    // Create table cells
     const data = [
       dateTime,
       `${temperature} °C`,
@@ -172,19 +162,24 @@ const createForecastTable = (page = 1) => {
     table.appendChild(row);
   });
 
-  // Append the table to the document
   const tableContainer = document.getElementById("table-container");
-  tableContainer.innerHTML = ""; // Clear any existing content
+  tableContainer.innerHTML = ""; // Clear previous table
   tableContainer.appendChild(table);
 
-  // Add pagination controls
   addPaginationControls(forecastList.length);
 };
 
+// Add pagination controls
 const addPaginationControls = (totalRows) => {
   const totalPages = Math.ceil(totalRows / rowsPerPage);
   const paginationContainer = document.createElement("div");
   paginationContainer.classList.add("pagination-controls");
+
+  // Clear previous pagination controls
+  const previousControls = document.querySelector(".pagination-controls");
+  if (previousControls) {
+    previousControls.remove();
+  }
 
   // Add Previous button
   const prevButton = document.createElement("button");
@@ -197,12 +192,9 @@ const addPaginationControls = (totalRows) => {
   for (let i = 1; i <= totalPages; i++) {
     const pageButton = document.createElement("button");
     pageButton.textContent = i;
-
-    // Only add the "active-page" class if it's the current page
     if (currentPage === i) {
       pageButton.classList.add("active-page");
     }
-
     pageButton.onclick = () => changePage(i);
     paginationContainer.appendChild(pageButton);
   }
@@ -214,18 +206,53 @@ const addPaginationControls = (totalRows) => {
   nextButton.onclick = () => changePage(currentPage + 1);
   paginationContainer.appendChild(nextButton);
 
-  // Append the pagination controls to the document
   const tableContainer = document.getElementById("table-container");
   tableContainer.appendChild(paginationContainer);
 };
 
+// Change page function
 const changePage = (page) => {
   currentPage = page;
-  createForecastTable(page);
+  createForecastTable(currentPage, filteredForecastList);
 };
 
-// Call the function to display the city name and create the forecast table when the page loads
+// Apply filters and sorting based on dropdown selection
+const applyFilter = () => {
+  const forecastData = JSON.parse(localStorage.getItem("fiveDayForecast"));
+  if (!forecastData) return;
+
+  let forecastList = [...originalForecastList]; // Work on a copy of the original list
+  const filterOption = document.getElementById("filter-options").value;
+
+  if (filterOption === "ascending") {
+    forecastList.sort((a, b) => a.main.temp - b.main.temp);
+  } else if (filterOption === "descending") {
+    forecastList.sort((a, b) => b.main.temp - a.main.temp);
+  } else if (filterOption === "rain") {
+    forecastList = forecastList.filter((forecast) =>
+      forecast.weather[0].main.toLowerCase().includes("rain")
+    );
+  } else if (filterOption === "highest-temp") {
+    const highestTemp = forecastList.reduce(
+      (max, current) => (current.main.temp > max.main.temp ? current : max),
+      forecastList[0]
+    );
+    forecastList = [highestTemp]; // Show only the highest temperature day
+  }
+
+  // Store the filtered list and reset to page 1
+  filteredForecastList = forecastList;
+  currentPage = 1; // Reset page to 1 when applying filter
+  createForecastTable(currentPage, filteredForecastList);
+};
+
+// Initialize the app when the page loads
 window.onload = () => {
-  displayCityName(); // Display city name
-  createForecastTable(); // Create forecast table
+  displayCityName();
+  const forecastData = JSON.parse(localStorage.getItem("fiveDayForecast"));
+  if (forecastData) {
+    originalForecastList = forecastData.list;
+    filteredForecastList = [...originalForecastList]; // Initialize filtered list
+    createForecastTable(currentPage, filteredForecastList); // Show the forecast table initially
+  }
 };
