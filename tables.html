@@ -14,8 +14,9 @@
       }
 
       body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
+        font-family: "Arial", sans-serif;
+        background-color: #f0f4f3;
+        color: #333;
       }
 
       .container {
@@ -24,17 +25,19 @@
       }
 
       .side-menu {
-        width: 20%;
-        background-color: #333;
+        width: 18%;
+        background-color: #2f4f4f; /* Dark greenish-grey */
         color: white;
         display: flex;
         flex-direction: column;
         align-items: center;
         padding-top: 20px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
       }
 
       .logo h2 {
         margin-bottom: 40px;
+        color: #b0e57c; /* Light green */
       }
 
       nav ul {
@@ -50,14 +53,15 @@
         color: white;
         text-decoration: none;
         font-size: 18px;
+        transition: color 0.3s ease;
       }
 
       nav ul li a:hover {
-        text-decoration: underline;
+        color: #b0e57c; /* Light green hover */
       }
 
       main {
-        width: 80%;
+        width: 82%;
         padding: 20px;
       }
 
@@ -69,15 +73,24 @@
       }
 
       .search-bar {
-        width: 70%;
+        width: 65%;
         padding: 10px;
         font-size: 16px;
+        border: 1px solid #b0e57c;
+        border-radius: 8px;
+        outline: none;
+        transition: border-color 0.3s ease;
+      }
+
+      .search-bar:focus {
+        border-color: #6cbf84; /* Medium green */
       }
 
       .user-profile img {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
+        border: 2px solid #b0e57c;
       }
 
       .table-section {
@@ -85,53 +98,187 @@
         padding: 20px;
         background-color: #fff;
         border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         text-align: center;
       }
 
-      .chatbot-section {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        margin-top: 20px;
+      .table-section h3 {
+        color: #2f4f4f;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
       }
 
-      .chat-bar {
-        padding: 10px;
-        background-color: #ddd;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-
-      #chat-input {
+      table {
         width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 4px;
-        font-size: 16px;
+        border-collapse: collapse;
       }
 
-      .answer-area {
+      table th,
+      table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+      }
+
+      table th {
+        background-color: #6cbf84; /* Medium green */
+        color: white;
+      }
+
+      table tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      .chatbot-section {
         margin-top: 20px;
-        padding: 20px;
+        padding: 15px;
         background-color: #fff;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        height: 200px;
-        overflow-y: auto; /* Allow scrolling when content overflows */
+      }
+
+      .chat-bar {
+        display: flex;
+        align-items: center;
+        background-color: #f7f7f7;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+      }
+
+      #chat-input {
+        width: 85%;
+        padding: 8px;
+        border: 1px solid #b0e57c;
+        border-radius: 6px;
+        outline: none;
+        margin-right: 10px;
+        font-size: 16px;
+      }
+
+      #chat-input:focus {
+        border-color: #6cbf84;
+      }
+
+      .chat-bar button {
+        padding: 8px 12px;
+        background-color: #6cbf84;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .chat-bar button:hover {
+        background-color: #4fa571; /* Darker green */
+      }
+
+      .answer-area {
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        height: 150px;
+        overflow-y: auto;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
       }
 
-      .message {
-        margin-bottom: 10px;
+      .answer-area p {
+        margin: 5px 0;
+        color: #333;
       }
 
-      #tables-link {
-        text-decoration: underline;
+      .message {
+        margin-bottom: 8px;
+        padding: 8px;
+        border-radius: 4px;
+        background-color: #e6f7e1;
+        width: 100%;
+        word-wrap: break-word;
       }
+
+      .message strong {
+        color: #2f4f4f; /* Dark greenish-grey */
+      }
+
+      /* Media Queries for Responsiveness */
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+        }
+
+        .side-menu {
+          width: 100%;
+          height: auto;
+        }
+
+        main {
+          width: 100%;
+        }
+
+        .header {
+          flex-direction: column;
+        }
+
+        .search-bar {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+
+        .answer-area {
+          height: 100px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .user-profile img {
+          width: 35px;
+          height: 35px;
+        }
+
+        #chat-input {
+          width: 75%;
+        }
+      }
+
+      .city-heading {
+        color: #2f4f4f;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+      }
+
+.pagination-controls {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+.pagination-controls button {
+  padding: 8px 12px;
+  margin: 0 5px;
+  background-color: #6cbf84;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination-controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination-controls .active-page {
+  background-color: #4fa571;
+  font-weight: bold;
+}
+
+      
     </style>
   </head>
   <body>
@@ -153,21 +300,28 @@
       <main>
         <!-- Header with Search and Profile -->
         <header class="header">
-          <input type="text" class="search-bar" placeholder="Search city..." />
+          <!-- <input type="text" class="search-bar" placeholder="Search city..." /> -->
+          <h1 id="city-heading">City Name:</h1> <!-- Heading for city name -->
+
           <div class="user-profile">
             <img src="./assets/logo.png" alt="User Profile" />
           </div>
+          <h1 id="city-heading"></h1> <!-- Heading for city name -->
+
         </header>
 
         <!-- Table Section -->
         <div>
-          <section class="table-section">
+          <section id="table-container">
             <h3>Table</h3>
             <!-- The actual table content can be added here -->
           </section>
 
           <!-- Chatbot Section -->
           <section class="chatbot-section">
+            <div class="answer-area"></div>
+              <!-- Chat messages will be appended here -->
+            </div>
             <div class="chat-bar">
               <input
                 type="text"
@@ -176,9 +330,7 @@
               />
               <button onclick="handleSendMessage()">Send</button>
             </div>
-            <div class="answer-area">
-              <!-- Chat messages will be appended here -->
-            </div>
+            
           </section>
         </div>
       </main>

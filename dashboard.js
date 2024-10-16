@@ -161,6 +161,10 @@ const handleSearch = async () => {
   const FiveDayForecastData = await fetch5DayForecast(cityName);
   console.log(weatherData);
 
+  // Save the city name and forecast data into localStorage
+  localStorage.setItem("cityName", cityName);
+  localStorage.setItem("fiveDayForecast", JSON.stringify(FiveDayForecastData));
+
   // Access the first element with the class 'weather-data'
   const weatherDataDiv = document.getElementsByClassName("weather-data")[0];
 
