@@ -40,10 +40,28 @@ const fetch5DayForecast = async (cityName) => {
   }
 };
 
+let isCelsius = true; // Default temperature unit
+
+// Function to toggle the unit between Celsius and Fahrenheit
+const toggleUnit = () => {
+  isCelsius = !isCelsius;
+  // Re-fetch data to update the UI with the correct temperature unit
+  handleSearch();
+};
+
+// Convert temperature based on the selected unit
+const convertTemperature = (kelvinTemp) => {
+  const celsiusTemp = kelvinTemp - 273.15;
+  return isCelsius
+    ? Math.round(celsiusTemp)
+    : Math.round((celsiusTemp * 9) / 5 + 32);
+};
+
+// Modify the charts and display functions to use `convertTemperature()`
+
 const makeVerticalBarChart = (data) => {
   const ctx = document.getElementById("vertical-bar-chart").getContext("2d");
 
-  // Destroy previous chart instance if it exists
   if (verticalBarChartInstance) {
     verticalBarChartInstance.destroy();
   }
@@ -52,7 +70,7 @@ const makeVerticalBarChart = (data) => {
     .map((item) => new Date(item.dt_txt).toLocaleDateString())
     .slice(0, 5);
   const temperatures = data.list
-    .map((item) => Math.round(item.main.temp - 273.15))
+    .map((item) => convertTemperature(item.main.temp))
     .slice(0, 5);
 
   verticalBarChartInstance = new Chart(ctx, {
@@ -61,7 +79,7 @@ const makeVerticalBarChart = (data) => {
       labels: labels,
       datasets: [
         {
-          label: "Temperature (°C)",
+          label: `Temperature (${isCelsius ? "°C" : "°F"})`,
           data: temperatures,
           backgroundColor: "rgba(54, 162, 235, 0.2)",
           borderColor: "rgba(54, 162, 235, 1)",
@@ -77,6 +95,85 @@ const makeVerticalBarChart = (data) => {
       },
     },
   });
+};
+
+const makeLineChart = (data) => {
+  const ctx = document.getElementById("line-chart").getContext("2d");
+
+  if (lineChartInstance) {
+    lineChartInstance.destroy();
+  }
+
+  const labels = data.list
+    .map((item) => new Date(item.dt_txt).toLocaleDateString())
+    .slice(0, 5);
+  const temperatures = data.list
+    .map((item) => convertTemperature(item.main.temp))
+    .slice(0, 5);
+
+  lineChartInstance = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: `Temperature (${isCelsius ? "°C" : "°F"})`,
+          data: temperatures,
+          borderColor: "rgba(75, 192, 192, 1)",
+          fill: false,
+        },
+      ],
+    },
+  });
+};
+
+const handleSearch = async () => {
+  const cityName = document.getElementById("cityInput").value;
+  const weatherData = await fetchWeatherData(cityName);
+  const FiveDayForecastData = await fetch5DayForecast(cityName);
+  console.log(weatherData);
+
+  localStorage.setItem("cityName", cityName);
+  localStorage.setItem("fiveDayForecast", JSON.stringify(FiveDayForecastData));
+
+  const weatherDataDiv = document.getElementsByClassName("weather-data")[0];
+
+  const weatherCondition = weatherData.weather[0].main.toLowerCase();
+  let backgroundImage = "";
+
+  switch (weatherCondition) {
+    case "clear":
+      backgroundImage = "assets/clear-sky.jpg";
+      break;
+    case "clouds":
+      backgroundImage = "assets/cloudy.jpg";
+      break;
+    case "rain":
+      backgroundImage = "assets/rain.jpg";
+      break;
+    default:
+      backgroundImage = "assets/clear-sky.jpg";
+  }
+
+  weatherDataDiv.style.backgroundImage = `url(${backgroundImage})`;
+  weatherDataDiv.style.backgroundSize = "cover";
+  weatherDataDiv.style.backgroundPosition = "center";
+  weatherDataDiv.style.color = "#fff";
+  weatherDataDiv.style.padding = "20px";
+
+  const temperature = convertTemperature(weatherData.main.temp);
+
+  weatherDataDiv.innerHTML = `
+    <h3>Weather for: ${cityName}</h3>
+    <p>Condition: ${weatherData.weather[0].description}</p>
+    <p>Temperature: ${temperature} °${isCelsius ? "C" : "F"}</p>
+    <p>Humidity: ${weatherData.main.humidity}%</p>
+    <p>Wind Speed: ${weatherData.wind.speed} m/s</p>
+  `;
+
+  makeVerticalBarChart(FiveDayForecastData);
+  makeDoughnutChart(FiveDayForecastData);
+  makeLineChart(FiveDayForecastData);
 };
 
 const makeDoughnutChart = (data) => {
@@ -121,107 +218,4 @@ const makeDoughnutChart = (data) => {
       ],
     },
   });
-};
-
-const makeLineChart = (data) => {
-  const ctx = document.getElementById("line-chart").getContext("2d");
-
-  // Destroy previous chart instance if it exists
-  if (lineChartInstance) {
-    lineChartInstance.destroy();
-  }
-
-  const labels = data.list
-    .map((item) => new Date(item.dt_txt).toLocaleDateString())
-    .slice(0, 5);
-  const temperatures = data.list
-    .map((item) => Math.round(item.main.temp - 273.15))
-    .slice(0, 5);
-
-  lineChartInstance = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: "Temperature (°C)",
-          data: temperatures,
-          fill: false,
-          borderColor: "rgba(75, 192, 192, 1)",
-          tension: 0.1,
-        },
-      ],
-    },
-  });
-};
-
-const handleSearch = async () => {
-  const cityName = document.getElementById("cityInput").value;
-  const weatherData = await fetchWeatherData(cityName);
-  const FiveDayForecastData = await fetch5DayForecast(cityName);
-  console.log(weatherData);
-
-  // Save the city name and forecast data into localStorage
-  localStorage.setItem("cityName", cityName);
-  localStorage.setItem("fiveDayForecast", JSON.stringify(FiveDayForecastData));
-
-  // Access the first element with the class 'weather-data'
-  const weatherDataDiv = document.getElementsByClassName("weather-data")[0];
-
-  // Determine the weather condition
-  const weatherCondition = weatherData.weather[0].main.toLowerCase();
-
-  // Map weather conditions to corresponding background images
-  let backgroundImage = "";
-
-  switch (weatherCondition) {
-    case "clear":
-      backgroundImage = "assets/clear-sky.jpg";
-      break;
-    case "clouds":
-      if (weatherData.weather[0].description.includes("few")) {
-        backgroundImage = "assets/few-clouds.jpg";
-      } else if (weatherData.weather[0].description.includes("scattered")) {
-        backgroundImage = "assets/scattered-clouds.jpg";
-      } else {
-        backgroundImage = "assets/cloudy.jpg";
-      }
-      break;
-    case "rain":
-      backgroundImage = "assets/rain.jpg";
-      break;
-    case "thunderstorm":
-      backgroundImage = "assets/thunderstorm.jpg";
-      break;
-    case "snow":
-      backgroundImage = "assets/snow.jpg";
-      break;
-    case "mist":
-    case "haze":
-    case "fog":
-      backgroundImage = "assets/mist.jpg";
-      break;
-    default:
-      backgroundImage = "assets/clear-sky.jpg"; // Default to clear sky if condition not found
-  }
-
-  // Set the background image of the weather widget
-  weatherDataDiv.style.backgroundImage = `url(${backgroundImage})`;
-  weatherDataDiv.style.backgroundSize = "cover";
-  weatherDataDiv.style.backgroundPosition = "center";
-  weatherDataDiv.style.color = "#fff"; // Change text color for better visibility on images
-  weatherDataDiv.style.padding = "20px"; // Add padding for better layout
-
-  // Display user's input and the weather data in the weather widget
-  weatherDataDiv.innerHTML = `
-    <h3>Weather for: ${cityName}</h3>
-    <p>Condition: ${weatherData.weather[0].description}</p>
-    <p>Temperature: ${Math.round(weatherData.main.temp - 273.15)} °C</p>
-    <p>Humidity: ${weatherData.main.humidity}%</p>
-    <p>Wind Speed: ${weatherData.wind.speed} m/s</p>
-  `;
-
-  makeVerticalBarChart(FiveDayForecastData);
-  makeDoughnutChart(FiveDayForecastData);
-  makeLineChart(FiveDayForecastData);
 };
