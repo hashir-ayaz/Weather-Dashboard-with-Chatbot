@@ -219,3 +219,71 @@ const makeDoughnutChart = (data) => {
     },
   });
 };
+
+if ("geolocation" in navigator) {
+  navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+} else {
+  alert("Geolocation is not supported by your browser.");
+}
+
+function successCallback(position) {
+  const { latitude, longitude } = position.coords;
+  console.log("Your Location: ", latitude, longitude);
+
+  // Call the weather API with the user's latitude and longitude
+  fetchWeatherByLocation(latitude, longitude);
+}
+
+function errorCallback(error) {
+  console.error("Error getting location: ", error.message);
+}
+
+const fetchWeatherByLocation = async (latitude, longitude) => {
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`;
+
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    console.log("Weather data for your location: ", data);
+    displayWeatherData(data);
+  } catch (error) {
+    console.error("Fetch error:", error);
+  }
+};
+
+const displayWeatherData = (data) => {
+  const weatherDataDiv = document.getElementsByClassName("weather-data")[0];
+  const temperature = Math.round(data.main.temp - 273.15); // Convert from Kelvin to Celsius
+  weatherDataDiv.innerHTML = `
+    <h3>Weather for Your Location</h3>
+    <p>Condition: ${data.weather[0].description}</p>
+    <p>Temperature: ${temperature} °C</p>
+    <p>Humidity: ${data.main.humidity}%</p>
+    <p>Wind Speed: ${data.wind.speed} m/s</p>
+  `;
+};
+
+window.onload = () => {
+  // Check if Geolocation is supported
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        // Fetch weather based on user's location
+        fetchWeatherByLocation(latitude, longitude);
+      },
+      (error) => {
+        console.error("Error fetching geolocation: ", error.message);
+        // Optionally, show default weather for a city if geolocation fails
+        fetchWeatherData("New York"); // Default to New York if location is unavailable
+      }
+    );
+  } else {
+    alert("Geolocation is not supported by your browser.");
+    // Show default weather if geolocation is not supported
+    fetchWeatherData("New York");
+  }
+};
