@@ -1,5 +1,7 @@
 # Weather Dashboard
 
+## Deployed @ https://hashir-ayaz.github.io/Weather-Dashboard-with-Chatbot/
+
 ## Overview
 
 This project is a fully functional **Weather Dashboard** built using HTML, CSS, and JavaScript. The dashboard displays current weather information and a 5-day weather forecast for any city entered by the user. It also includes additional features such as unit conversion (Celsius to Fahrenheit), geolocation-based weather retrieval, loading spinners, error handling, and animations for a more interactive user experience.
