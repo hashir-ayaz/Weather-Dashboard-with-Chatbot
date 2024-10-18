@@ -15,6 +15,7 @@ const fetchWeatherData = async (cityName) => {
       `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${OPENWEATHER_API_KEY}`
     );
     if (!response.ok) {
+      alert("City not found. Please try again.");
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
